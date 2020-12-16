@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if true
+        && isAuthUser(userId)
+      ;
+      allow create: if true 
+        && isAuthUser(userId)
+        && isValidUser(requestData())
+        && isRequestTime('createdAt')
+        && isRequestTime('updatedAt')
+      ;
+      allow update: if true 
+        && isAuthUser(userId)
+        && isValidUser(requestData())
+        && isNotChanged('createdAt')
+        && isRequestTime('updatedAt')
+      ;
+      allow delete: if false;
+    }
+
+    match /twitterUsers/{twitterUserId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+  }
+}
+
+function requestData() {
+  return request.resource.data;
+}
+
+function existingData() {
+  return resource.data;
+}
+
+function isAuthenticated() {
+  return request.auth != null
+}
+
+function isAuthUser(userId) {
+  return isAuthenticated() && request.auth.uid == userId;
+}
+
+function isAuthUserTwitterId(twitterId) {
+  return true 
+    && 'token' in request.auth
+    && 'twitterId' in request.auth.token
+    && request.auth.token.twitterId == twitterId
+  ;
+}
+
+function isValidUser(user) {
+  return true 
+    && user.size() == 3
+    && user.keys().hasAll([
+      'twitter', 'createdAt', 'updatedAt'
+    ])
+    && isValidTwitter(user.twitter)
+    && user.createdAt is timestamp
+    && user.updatedAt is timestamp
+  ;
+}
+
+function isValidTwitter(twitter) {
+  return true
+    && twitter.size() == 3
+    && twitter.keys().hasAll([
+      'id', 'token', 'secret'
+    ])
+    && isNullOrString(twitter.id)
+    && twitter.token is string
+    && twitter.secret is string
+  ;
+}
+
+function isNullOrString(str) {
+  return str is string || str == null;
+}
+
+function isRequestTime(key) {
+  return requestData()[key] == request.time;
+}
+
+function isNotChanged(key) {
+  return requestData()[key] == existingData()[key];
+}

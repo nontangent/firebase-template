@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["es2019"],
+    "esModuleInterop": false,
+    "skipLibCheck": true,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": false,
+    "target": "es6",
+    "baseUrl": "./",
+    "paths": {}
+  },
+  "compileOnSave": true,
+  "include": [
+    "tests"
+  ],
+  "exclude": [
+    "src/**/*.test.ts"
+  ]
+}

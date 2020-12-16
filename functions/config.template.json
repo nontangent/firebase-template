@@ -1,0 +1,9 @@
+{
+    "production": "true",
+    "twitter": {
+        "consumerKey": "",
+        "consumerSecret": "",
+        "accessToken": "",
+        "accessTokenSecret": ""
+    }
+}

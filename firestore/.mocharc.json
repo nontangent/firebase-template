@@ -1,0 +1,11 @@
+{
+    "timeout": 10000,
+    "require": [
+        "ts-node/register"
+    ],
+    "watch-files": [
+        "firestore/tests/*.ts",
+        "firestore/utilities/*.ts",
+        "firestore/firestore.rules"
+    ]
+}
